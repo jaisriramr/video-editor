@@ -1,0 +1,11 @@
+#canva-id {
+    border: 1px solid gray;
+    margin: 10px;
+}
+
+.footer {
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
