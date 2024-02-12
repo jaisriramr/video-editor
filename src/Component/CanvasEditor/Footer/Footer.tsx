@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import "./Footer.css";
 
 const Footer = ({
@@ -13,6 +13,49 @@ const Footer = ({
   canvaRef?: any;
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // useEffect(() => {
+  //   if (canvaData) {
+  //     console.log("cammmomoerje");
+  //     const rectangle = document.querySelector(
+  //       ".video-editor__canva-image-holder"
+  //     ) as HTMLElement;
+  //     let isResizing = false;
+  //     let lastX: any;
+
+  //     console.log(rectangle);
+
+  //     rectangle?.addEventListener("mousedown", function (e) {
+  //       isResizing = true;
+  //       lastX = e.clientX;
+  //     });
+
+  //     document?.addEventListener("mousemove", function (e) {
+  //       if (!isResizing) return;
+
+  //       const deltaX = e.clientX - lastX;
+  //       const step = 5;
+  //       const newWidth =
+  //         rectangle.offsetWidth + Math.round(deltaX / step) * step;
+
+  //       rectangle.style.width = newWidth + "px";
+
+  //       lastX = e.clientX;
+
+  //       // Change cursor to indicate resizing near the edges
+  //       const rect = rectangle.getBoundingClientRect();
+  //       if (e.clientX < rect.left + 10 || e.clientX > rect.right - 10) {
+  //         document.body.style.cursor = "ew-resize";
+  //       } else {
+  //         document.body.style.cursor = "auto";
+  //       }
+  //     });
+
+  //     document.addEventListener("mouseup", function () {
+  //       isResizing = false;
+  //     });
+  //   }
+  // }, [canvaData]);
 
   return (
     <div className="video-editor__footer">
