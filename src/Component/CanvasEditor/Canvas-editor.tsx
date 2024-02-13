@@ -2350,7 +2350,7 @@ const CanvaEditor = ({
     // console.log(obj.canvas.lowerCanvasEl);
 
     const objs = document.querySelector(".lower-canvas") as HTMLCanvasElement;
-    console.log("koko ", objs.captureStream(24));
+    // console.log("koko ", objs.captureStream(24));
 
     // const cStream = obj.canvas.lowerCanvasEl.captureStream(24);
     // const cStream = obj.captureStream(24);
