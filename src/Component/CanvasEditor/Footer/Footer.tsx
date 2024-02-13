@@ -54,7 +54,29 @@ const Footer = ({
       array_width.forEach((width: number, i: number) => {
         if (width == increment) {
           handleSelectedCanva(i + 1);
-          // console.log(canvaData);
+
+          console.log("canvaData ", canvaData);
+
+          canvaData?.forEach((canva: any, j: number) => {
+            // console.log(canva)
+
+            if (canva?.transition) {
+              if (canva?.transition?.type == "disolve" && j == i) {
+                const upperCanvas = document.querySelector(
+                  ".aplus-content-canva-wrapper"
+                );
+                const div = document.createElement("div");
+                div.classList.add("disolve");
+                upperCanvas?.appendChild(div);
+                setTimeout(() => {
+                  div.classList.add("disolve-hidden");
+                }, 1);
+                setTimeout(() => {
+                  upperCanvas?.removeChild(div);
+                }, 2000);
+              }
+            }
+          });
 
           // if (i + 1 == 1) {
           //   console.log(i, " INDX ");
@@ -265,6 +287,33 @@ const Footer = ({
                 alt="image canva"
                 className="video-editor__canva-img"
               />
+
+              {/* {canvaData.length !== i + 1 && (
+                <div className="add-transition">
+                  <svg
+                    width="25"
+                    height="25"
+                    viewBox="0 0 25 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12.3841 5.53068V19.5307"
+                      stroke="black"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M5.38409 12.5307H19.3841"
+                      stroke="black"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              )} */}
               {/* <div className="video-editor__canva-trimmer-holder"></div> */}
             </div>
           ))}

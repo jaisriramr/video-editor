@@ -108,3 +108,16 @@
   .video-editor__canva-image-holder-active {
     border-color: #8B3DFF;
   }
+
+  .add-transition {
+    position: relative;
+    
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 50px;
+  }

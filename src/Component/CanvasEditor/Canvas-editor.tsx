@@ -1021,6 +1021,10 @@ const CanvaEditor = ({
 
   useEffect(() => {
     if (rendered) {
+      let cD = [...canvaDetails];
+      Object.assign(cD[0], { transition: { type: "disolve", time: 1 } });
+      Object.assign(cD[1], { transition: { type: "linear", time: 1 } });
+
       localStorage.setItem("video-editor", JSON.stringify(canvaDetails));
       setRendered(false);
     }
