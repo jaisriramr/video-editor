@@ -9,6 +9,7 @@
     align-items: center;
     column-gap: 10px;
     height: 80px;
+    position: relative;
     width: 100%;
     padding: 10px;
     /* background-color: red; */
@@ -54,9 +55,11 @@
   .video-editor__timeline-cursor {
     position: absolute;
     height: 80px;
-    width: 2px;
-    
-    background-color: red;
+    width: 4px;
+    top: 8px;
+    left: 74px;
+    z-index: 9999;
+    background-color: black;
     cursor: grabbing;
     /* transition: .1s ease; */
     display: flex;
@@ -66,10 +69,13 @@
 
   .video-editor__timeline-cursor-head {
     position: absolute;
-    display: none;
+    /* display: none; */
+    height: 18px;
+    width: 18px;
     z-index: 10;
     rotate: 90deg;
-    top: -10px;
+    top: -20px;
+    /* left: 68px; */
   }
 
   .video-editor__canva-image-holder {

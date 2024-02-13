@@ -46,20 +46,13 @@ const Footer = ({
         array_width.push(totalWidth);
       });
       let checker = setInterval(() => {
-        array_width.forEach((width: number) => {
-          if (
-            width == increment &&
-            totalWidth + (timelineCanvas.length - 1) * 10 == increment
-          ) {
-            timelineCursor.style.transform =
-              "translateX(" + increment + 10 + "px)";
-          }
-        });
         if (totalWidth + (timelineCanvas.length - 1) * 10 == increment) {
           clearInterval(interval);
           console.log(increment, array_width);
           clearInterval(checker);
           setIsPlaying(false);
+          setIncrement(1);
+          timelineCursor.style.transform = "translateX(" + 1 + "px)";
         }
       });
     }
@@ -70,6 +63,77 @@ const Footer = ({
       }
     };
   }, [isPlaying, increment]);
+
+  /**
+   * This useEffect is for handling the events
+   */
+  useEffect(() => {
+    const Cursor = document.querySelector(
+      ".video-editor__timeline-cursor"
+    ) as HTMLElement;
+
+    let isDraggin = false;
+    let prevX: any;
+
+    Cursor.addEventListener("mousedown", (e) => {
+      isDraggin = true;
+      prevX = e.clientX;
+    });
+
+    let incr: number = 1;
+
+    document.addEventListener(
+      "mousemove",
+      (e) => {
+        e.preventDefault();
+        let totalWidth = 0;
+        const timelineCanvas = document.querySelectorAll(
+          ".video-editor__canva-image-holder"
+        );
+        timelineCanvas.forEach((canva) => {
+          totalWidth += canva.getBoundingClientRect().width;
+        });
+        if (isDraggin) {
+          var newX = e.clientX;
+          var deltaX = newX - prevX;
+
+          let offLeft = e.clientX - 521 + 74;
+          console.log(
+            "DELTA X ",
+            offLeft - 74,
+            totalWidth + (timelineCanvas.length - 1) * 10
+          );
+
+          if (
+            deltaX > 0 &&
+            !(offLeft - 74 > totalWidth + (timelineCanvas.length - 1) * 10)
+          ) {
+            incr += 1;
+            Cursor.style.left = offLeft + 1 + "px";
+          } else if (deltaX < 0 && !(offLeft - 74 < 0)) {
+            Cursor.style.left = offLeft - 1 + "px";
+          }
+        }
+      },
+      false
+    );
+
+    Cursor.addEventListener(
+      "mouseup",
+      () => {
+        isDraggin = false;
+      },
+      false
+    );
+
+    document.addEventListener(
+      "mouseup",
+      () => {
+        isDraggin = false;
+      },
+      false
+    );
+  }, []);
 
   return (
     <div className="video-editor__footer">
@@ -113,22 +177,23 @@ const Footer = ({
           )}
         </div>
 
+        <div className="video-editor__timeline-cursor">
+          <svg
+            className="video-editor__timeline-cursor-head"
+            width="23"
+            height="25"
+            viewBox="0 0 23 25"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21.2852 10.4834L4.09766 0.322257C2.70117 -0.502938 0.5625 0.297843 0.5625 2.33886V22.6562C0.5625 24.4873 2.5498 25.5908 4.09766 24.6728L21.2852 14.5166C22.8184 13.6133 22.8232 11.3867 21.2852 10.4834Z"
+              fill="black"
+            />
+          </svg>
+        </div>
+
         <div className="video-editor__canva-holder">
-          <div className="video-editor__timeline-cursor">
-            <svg
-              className="video-editor__timeline-cursor-head"
-              width="23"
-              height="25"
-              viewBox="0 0 23 25"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21.2852 10.4834L4.09766 0.322257C2.70117 -0.502938 0.5625 0.297843 0.5625 2.33886V22.6562C0.5625 24.4873 2.5498 25.5908 4.09766 24.6728L21.2852 14.5166C22.8184 13.6133 22.8232 11.3867 21.2852 10.4834Z"
-                fill="black"
-              />
-            </svg>
-          </div>
           {canvaData?.map((canva: any, i: number) => (
             <div
               className={
