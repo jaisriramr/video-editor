@@ -45,13 +45,44 @@
   .video-editor__canva-holder {
     display: flex;
     column-gap: 10px;
+    /* overflow-y: hidden; */
+    overflow-x: auto;
+    position: relative;
+    padding-right: 10px;
+  }
+
+  .video-editor__timeline-cursor {
+    position: absolute;
+    height: 80px;
+    width: 4px;
+    
+    background-color: red;
+    cursor: grabbing;
+    transition: .1s ease;
+    display: flex;
+    justify-content: center;
+
+  }
+
+  .video-editor__timeline-cursor-head {
+    position: absolute;
+    display: none;
+    z-index: 10;
+    rotate: 90deg;
+    top: -10px;
   }
 
   .video-editor__canva-image-holder {
     width: calc(30px * 5);
+    display: flex;
+    align-items: center;
+    overflow: auto;
+    /* padding: 10px; */
     height: 80px;
-    background-color: red;
-    outline: 2px solid gray;
+    resize: horizontal;
+    transition: .1s ease;
+    /* outline: 2px solid gray; */
+    border: 2px solid gray;
     border-radius: 10px;
   }
 
@@ -59,4 +90,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .video-editor__canva-trimmer-holder {
+    height: 60px;
+    width: 4px;
+    cursor: ew-resize;
+    background-color: gray;
+  }
+
+  .video-editor__canva-image-holder-active {
+    border-color: #8B3DFF;
   }

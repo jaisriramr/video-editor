@@ -2342,15 +2342,18 @@ const CanvaEditor = ({
   function handleDownload() {
     const frames: any[] = [];
 
-    const obj = canvasRef?.current?.getActiveObject();
-    // console.log(obj.canvas.lowerCanvasEl.captureStream(24));
+    // const obj = canvasRef?.current?.getActiveObject();
+    // console.log(obj.canvas.lowerCanvasEl);
 
-    // const obj = document.querySelector(".lower-canvas") as HTMLCanvasElement;
+    const objs = document.querySelector(".lower-canvas") as HTMLCanvasElement;
+    console.log("koko ", objs.captureStream(24));
 
-    const cStream = obj.canvas.lowerCanvasEl.captureStream(24);
+    // const cStream = obj.canvas.lowerCanvasEl.captureStream(24);
     // const cStream = obj.captureStream(24);
 
-    const recorder = new MediaRecorder(cStream, { mimeType: "video/webm" });
+    const recorder = new MediaRecorder(objs.captureStream(24), {
+      mimeType: "video/webm",
+    });
     recorder.start();
     recorder.ondataavailable = saveChunks;
     recorder.onstop = exportStream;
@@ -6631,6 +6634,7 @@ const CanvaEditor = ({
           </div>
           <Footer
             canvaData={canvaDetails}
+            selectedCanva={currentSelectedCanva}
             handleSelectedCanva={handleSelectedCanva}
             addCanva={handleAddCanva}
             canvaRef={canvasRef}
