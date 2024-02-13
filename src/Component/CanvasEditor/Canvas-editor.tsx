@@ -1036,7 +1036,7 @@ const CanvaEditor = ({
   function handleCanvaDetailsUpd() {
     // console.log("comeiomeiorjio");
     const cD = [...canvaDetails];
-
+    console.log(currentSelectedCanva);
     // console.log("CAMVVVV ", canvaDetails, currentSelectedCanva);
 
     const currentCD = { ...cD[currentSelectedCanva] };
@@ -1049,7 +1049,7 @@ const CanvaEditor = ({
 
   useEffect(() => {
     let json = canvaDetails[currentSelectedCanva]?.prop;
-    // console.log("JSON ", json, currentSelectedCanva);
+
     canvasRef?.current?.loadFromJSON(json, () => {
       canvasRef?.current?.renderAll();
       canvasRef?.current?.requestRenderAll();
@@ -6627,6 +6627,7 @@ const CanvaEditor = ({
           </nav>
           <div className="aplus-content-canva-holder">
             <div className="aplus-content-canva-wrapper">
+              {/* <div className="linear"></div> */}
               <canvas id="aplus-content" width={width} height={height}>
                 Canvas not supported
               </canvas>

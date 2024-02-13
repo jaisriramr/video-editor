@@ -61,7 +61,7 @@
     z-index: 9999;
     background-color: black;
     cursor: grabbing;
-    /* transition: .1s ease; */
+    /* transition: .5s ease; */
     display: flex;
     justify-content: center;
 

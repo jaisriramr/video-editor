@@ -37,21 +37,76 @@ const Footer = ({
       }, 10);
 
       let totalWidth = 0;
+
       let array_width: any = [];
       const timelineCanvas = document.querySelectorAll(
         ".video-editor__canva-image-holder"
       );
-      timelineCanvas.forEach((canva) => {
+
+      let CW: number = 0;
+
+      timelineCanvas.forEach((canva, i) => {
+        CW += canva.getBoundingClientRect().width + 10;
         totalWidth += canva.getBoundingClientRect().width;
-        array_width.push(totalWidth);
+        array_width.push(CW);
+      });
+
+      array_width.forEach((width: number, i: number) => {
+        if (width == increment) {
+          handleSelectedCanva(i + 1);
+          // console.log(canvaData);
+
+          // if (i + 1 == 1) {
+          //   console.log(i, " INDX ");
+          //   const upperCanvas = document.querySelector(
+          //     ".aplus-content-canva-wrapper"
+          //   ) as HTMLElement;
+          //   const div = document.createElement("canvas");
+          //   div.classList.add("disolve");
+          //   upperCanvas.appendChild(div);
+          //   setTimeout(() => {
+          //     div.classList.add("disolve-hidden");
+          //   }, 1);
+          //   setTimeout(() => {
+          //     upperCanvas.removeChild(div);
+          //   }, 2000);
+          // }
+          // if (i + 1 == 2) {
+          //   const upperCanvas = document.querySelector(
+          //     ".aplus-content-canva-wrapper"
+          //   ) as HTMLElement;
+
+          //   const div = document.createElement("div");
+          //   div.classList.add("linear");
+          //   upperCanvas.appendChild(div);
+
+          //   let dec = 100;
+
+          //   let interval = setInterval(() => {
+          //     dec -= 0.5;
+          //     div.style.mask = `linear-gradient(90deg, rgb(0, 0, 0) ${dec}%, rgba(0, 0, 0, 0) ${dec}%)`;
+          //     if (dec == 0) {
+          //       clearInterval(interval);
+          //     }
+          //   });
+          // }
+
+          // console.log(i + 1, canvaData[i + 1]);
+          // const json = canvaData[i + 1].prop;
+          // console.log(json);
+          // canvaRef.current?.loadFromJSON(json, () => {
+          //   canvaRef?.current?.renderAll();
+          //   canvaRef?.current?.requestRenderAll();
+          // });
+        }
       });
       let checker = setInterval(() => {
         if (totalWidth + (timelineCanvas.length - 1) * 10 == increment) {
           clearInterval(interval);
-          console.log(increment, array_width);
           clearInterval(checker);
           setIsPlaying(false);
           setIncrement(1);
+          handleSelectedCanva(0);
           timelineCursor.style.transform = "translateX(" + 1 + "px)";
         }
       });
@@ -78,45 +133,44 @@ const Footer = ({
     Cursor.addEventListener("mousedown", (e) => {
       isDraggin = true;
       prevX = e.clientX;
+      document.addEventListener(
+        "mousemove",
+        (e) => {
+          e.preventDefault();
+          let totalWidth = 0;
+          const timelineCanvas = document.querySelectorAll(
+            ".video-editor__canva-image-holder"
+          );
+          timelineCanvas.forEach((canva) => {
+            totalWidth += canva.getBoundingClientRect().width;
+          });
+          if (isDraggin) {
+            var newX = e.clientX;
+            var deltaX = newX - prevX;
+
+            let offLeft = e.clientX - 521 + 74;
+            console.log(
+              "DELTA X ",
+              offLeft - 74,
+              totalWidth + (timelineCanvas.length - 1) * 10
+            );
+
+            if (
+              deltaX > 0 &&
+              !(offLeft - 74 > totalWidth + (timelineCanvas.length - 1) * 10)
+            ) {
+              incr += 1;
+              Cursor.style.left = offLeft + 1 + "px";
+            } else if (deltaX < 0 && !(offLeft - 74 < 0)) {
+              Cursor.style.left = offLeft - 1 + "px";
+            }
+          }
+        },
+        false
+      );
     });
 
     let incr: number = 1;
-
-    document.addEventListener(
-      "mousemove",
-      (e) => {
-        e.preventDefault();
-        let totalWidth = 0;
-        const timelineCanvas = document.querySelectorAll(
-          ".video-editor__canva-image-holder"
-        );
-        timelineCanvas.forEach((canva) => {
-          totalWidth += canva.getBoundingClientRect().width;
-        });
-        if (isDraggin) {
-          var newX = e.clientX;
-          var deltaX = newX - prevX;
-
-          let offLeft = e.clientX - 521 + 74;
-          console.log(
-            "DELTA X ",
-            offLeft - 74,
-            totalWidth + (timelineCanvas.length - 1) * 10
-          );
-
-          if (
-            deltaX > 0 &&
-            !(offLeft - 74 > totalWidth + (timelineCanvas.length - 1) * 10)
-          ) {
-            incr += 1;
-            Cursor.style.left = offLeft + 1 + "px";
-          } else if (deltaX < 0 && !(offLeft - 74 < 0)) {
-            Cursor.style.left = offLeft - 1 + "px";
-          }
-        }
-      },
-      false
-    );
 
     Cursor.addEventListener(
       "mouseup",
@@ -130,6 +184,9 @@ const Footer = ({
       "mouseup",
       () => {
         isDraggin = false;
+        document.removeEventListener("mousemove", () =>
+          console.log("removed mouve ove")
+        );
       },
       false
     );
