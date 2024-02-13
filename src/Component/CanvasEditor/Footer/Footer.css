@@ -54,11 +54,11 @@
   .video-editor__timeline-cursor {
     position: absolute;
     height: 80px;
-    width: 4px;
+    width: 2px;
     
     background-color: red;
     cursor: grabbing;
-    transition: .1s ease;
+    /* transition: .1s ease; */
     display: flex;
     justify-content: center;
 

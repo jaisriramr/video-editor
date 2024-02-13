@@ -1,3 +1,21 @@
 #editor {
   border: 1px solid gray;
 }
+
+.parent {
+  display: flex;
+  column-gap: 10px;
+}
+
+.child {
+  height: 100px;
+  background-color: antiquewhite;
+}
+
+.cursor {
+  position: absolute;
+  width: 2px;
+  height: 100px;
+  background-color: red;
+  transition: .2s ease;
+}

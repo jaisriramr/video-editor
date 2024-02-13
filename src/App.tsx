@@ -6,13 +6,14 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { Fragment } from "react";
 import CanvaEditor from "./Component/CanvasEditor/Canvas-editor";
 import VideoPage from "./video-page";
+import ParentComponent from "./test";
 
 function App() {
   return (
     <Fragment>
       <Router>
         <Routes>
-          <Route path="/" Component={VideoEditor} />
+          <Route path="/" Component={ParentComponent} />
           <Route path="/test" Component={VideoPage}></Route>
         </Routes>
       </Router>

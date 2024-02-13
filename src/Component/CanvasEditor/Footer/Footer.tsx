@@ -16,107 +16,13 @@ const Footer = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // useEffect(() => {
-  //   if (canvaData) {
-  //     console.log("cammmomoerje");
-  //     const rectangle = document.querySelector(
-  //       ".video-editor__canva-trimmer-holder"
-  //     ) as HTMLElement;
-  //     let isResizing = false;
-  //     let lastX: any;
-
-  //     const canva = document.querySelector(
-  //       ".video-editor__canva-image-holder"
-  //     ) as HTMLElement;
-
-  //     rectangle?.addEventListener("mousedown", function (e) {
-  //       isResizing = true;
-  //       lastX = e.clientX;
-  //     });
-
-  //     document?.addEventListener("mousemove", function (e) {
-  //       if (!isResizing) return;
-
-  //       const deltaX = e.clientX - lastX;
-  //       // const step = 5;
-  //       // const newWidth = canva.offsetWidth + Math.round(deltaX / step) * step;
-  //       const newWidth = rectangle.offsetWidth + deltaX;
-
-  //       canva.style.width = newWidth + "px";
-
-  //       lastX = e.clientX;
-
-  //       // Change cursor to indicate resizing near the edges
-  //       // const rect = canva.getBoundingClientRect();
-  //       // if (e.clientX < rect.left + 10 || e.clientX > rect.right - 10) {
-  //       //   document.body.style.cursor = "ew-resize";
-  //       // } else {
-  //       //   document.body.style.cursor = "auto";
-  //       // }
-  //     });
-
-  //     document.addEventListener("mouseup", function () {
-  //       isResizing = false;
-  //     });
-  //   }
-  // }, [canvaData]);
-
   const [increment, setIncrement] = useState<number>(1);
-  const [totalWidth, setTotalWidth] = useState<number>(0);
-  const intervalRef = useRef<any>(null);
-
-  async function handlePlay() {
-    const timelineCursor = document.querySelector(
-      ".video-editor__timeline-cursor"
-    ) as HTMLElement;
-    const timelineCanvas = document.querySelectorAll(
-      ".video-editor__canva-image-holder"
-    );
-
-    let totalWidth = 0;
-    let interval: any;
-    let increment = 1;
-
-    interval = setInterval(() => {
-      increment += 1;
-      timelineCursor.style.transform = "translateX(" + increment + "px)";
-      // console.log(increment);
-    });
-
-    timelineCanvas.forEach((canva, i) => {
-      const style = canva.getBoundingClientRect();
-      // console.log(style);
-      totalWidth += style.width;
-      interval;
-      setTimeout(() => {
-        increment += 10;
-      }, style.width * 3.89);
-    });
-
-    let cli = setInterval(() => {
-      if (
-        Math.round(totalWidth + (timelineCanvas.length - 1) * 10) == increment
-      ) {
-        clearInterval(interval);
-        clearInterval(cli);
-        totalWidth = 0;
-        increment = 1;
-      }
-    });
-
-    // setTimeout(() => {
-    //   clearInterval(interval);
-    //   console.log(increment, totalWidth + timelineCanvas.length * 10);
-    // }, totalWidth * 3.8);
-  }
-
-  async function handlePause() {}
 
   useEffect(() => {
-    let totalWidth = 0;
+    // let totalWidth = 0;
     let interval: any;
-    let increment = 1;
-    let cli: any;
+    // let increment = 1;
+    // let cli: any;
     const timelineCursor = document.querySelector(
       ".video-editor__timeline-cursor"
     ) as HTMLElement;
@@ -126,40 +32,44 @@ const Footer = ({
 
     if (isPlaying) {
       interval = setInterval(() => {
-        increment += 1;
+        setIncrement(increment + 1);
         timelineCursor.style.transform = "translateX(" + increment + "px)";
-        if (!isPlaying) clearInterval(interval);
+      }, 10);
+
+      let totalWidth = 0;
+      let array_width: any = [];
+      const timelineCanvas = document.querySelectorAll(
+        ".video-editor__canva-image-holder"
+      );
+      timelineCanvas.forEach((canva) => {
+        totalWidth += canva.getBoundingClientRect().width;
+        array_width.push(totalWidth);
       });
-
-      timelineCanvas.forEach((canva, i) => {
-        if (!isPlaying) return;
-        const style = canva.getBoundingClientRect();
-        totalWidth += style.width;
-
-        setTimeout(() => {
-          increment += 10;
-        }, style.width * 3.89);
-      });
-
-      cli = setInterval(() => {
-        if (
-          Math.round(totalWidth + (timelineCanvas.length - 1) * 10) == increment
-        ) {
-          setIsPlaying(false);
-          totalWidth = 0;
+      let checker = setInterval(() => {
+        array_width.forEach((width: number) => {
+          if (
+            width == increment &&
+            totalWidth + (timelineCanvas.length - 1) * 10 == increment
+          ) {
+            timelineCursor.style.transform =
+              "translateX(" + increment + 10 + "px)";
+          }
+        });
+        if (totalWidth + (timelineCanvas.length - 1) * 10 == increment) {
           clearInterval(interval);
-          clearInterval(cli);
-          increment = 1;
+          console.log(increment, array_width);
+          clearInterval(checker);
+          setIsPlaying(false);
         }
       });
     }
 
-    if (!isPlaying) {
-      console.log("cleareeed");
-      clearInterval(cli);
-      clearInterval(interval);
-    }
-  }, [isPlaying]);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isPlaying, increment]);
 
   return (
     <div className="video-editor__footer">
@@ -219,7 +129,6 @@ const Footer = ({
               />
             </svg>
           </div>
-
           {canvaData?.map((canva: any, i: number) => (
             <div
               className={
