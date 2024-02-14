@@ -74,6 +74,25 @@ const Footer = ({
                 setTimeout(() => {
                   upperCanvas?.removeChild(div);
                 }, 2000);
+              } else if (canva?.transition?.type == "linear" && j == i) {
+                const upperCanvas = document.querySelector(
+                  ".aplus-content-canva-wrapper"
+                ) as HTMLElement;
+
+                const div = document.createElement("div");
+                div.classList.add("linear");
+                div.style.backgroundImage = `url(${canva.img})`;
+                upperCanvas.appendChild(div);
+
+                let dec = 100;
+
+                let interval = setInterval(() => {
+                  dec -= 0.5;
+                  div.style.mask = `linear-gradient(90deg, rgb(0, 0, 0) ${dec}%, rgba(0, 0, 0, 0) ${dec}%)`;
+                  if (dec == 0) {
+                    clearInterval(interval);
+                  }
+                });
               }
             }
           });

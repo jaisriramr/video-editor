@@ -36,6 +36,7 @@ import StrokeColor from "../../assets/react.svg";
 
 import { SearchOptions } from "./svg/searchOptions";
 import Footer from "./Footer/Footer";
+import { HandleDownload } from "./Plugins/Download";
 
 // import ReactCrop from 'react-image-crop';
 
@@ -2338,9 +2339,9 @@ const CanvaEditor = ({
   }, [currentMenu, canvasRef?.current?.getObjects()]);
 
   function handleSave() {
-    handleDownload();
-
+    // handleDownload();
     setOutputImage("open");
+    HandleDownload(canvaDetails, canvasRef);
   }
 
   function handleDownload() {
