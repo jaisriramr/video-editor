@@ -79,6 +79,18 @@ import { fabric } from "fabric";
 
 export const HandleDownload = async (canvaData?: any, canvasRef?: any) => {
   // fabricjs Start
+
+  let NewCanvaData = [...canvaData];
+  NewCanvaData.push({
+    prop: {
+      version: "5.3.0",
+      objects: [],
+      background: "#ffffff",
+    },
+    width: 30 * 5,
+    img: "",
+  });
+
   const canvasElement = document.createElement("canvas") as HTMLCanvasElement;
   const canvas = new fabric.Canvas(canvasElement, {
     backgroundColor: canvasRef?.current?.backgroundColor,
@@ -120,25 +132,41 @@ export const HandleDownload = async (canvaData?: any, canvasRef?: any) => {
   }
 
   let currentIndex = 0;
+  let timeSpent = 0;
 
   const interval = setInterval(() => {
-    const json = canvaData[currentIndex]?.prop;
+    console.log("cuuuur  ", currentIndex);
+    console.log("tiiimm ", timeSpent);
+
+    const json = NewCanvaData[currentIndex]?.prop;
     canvas.loadFromJSON(json, () => {
       canvas.renderAll();
       canvas.requestRenderAll();
-
-      if (currentIndex == 0) {
-        recorder.start();
-      }
+      handlePlay();
     });
 
-    currentIndex += 1;
-  }, 5500);
+    if (currentIndex == 0) {
+      recorder.start();
+    }
 
-  setTimeout(() => {
-    clearInterval(interval);
-    recorder.stop();
-  }, 17500);
+    if (currentIndex + 1 == NewCanvaData.length) {
+      clearInterval(interval);
+      console.log(currentIndex, " currentIndex");
+      setTimeout(() => {
+        console.log(currentIndex, " currentIndex", NewCanvaData[currentIndex]);
+        recorder.stop();
+      }, 5100);
+    }
+
+    currentIndex += 1;
+    timeSpent += 5100;
+  }, 5100);
+
+  //   setTimeout(() => {
+  //     console.log("caomomomomomomomo");
+  //     clearInterval(interval);
+  //     recorder.stop();
+  //   }, 11000);
 
   function handlePlay() {
     function animate() {
