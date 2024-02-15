@@ -122,17 +122,26 @@ const CanvaEditor = ({
   }
 
   function handleSetTransition(type: string, timing: string) {
-    const cD = [...canvaDetails];
-    if (cD[SelectedTransitionFrame]?.transition) {
-      cD[SelectedTransitionFrame].transition.type = type;
-      cD[SelectedTransitionFrame].transition.timing = timing;
-    } else {
-      Object.assign(cD[SelectedTransitionFrame], {
-        transition: { type: type, time: timing },
-      });
-    }
+    if (type == "none") {
+      const cD = [...canvaDetails];
+      if (cD[SelectedTransitionFrame]?.transition) {
+        cD[SelectedTransitionFrame].transition = null;
+      }
 
-    setCanvaDetails(cD);
+      setCanvaDetails(cD);
+    } else {
+      const cD = [...canvaDetails];
+      if (cD[SelectedTransitionFrame]?.transition) {
+        cD[SelectedTransitionFrame].transition.type = type;
+        cD[SelectedTransitionFrame].transition.timing = timing;
+      } else {
+        Object.assign(cD[SelectedTransitionFrame], {
+          transition: { type: type, time: timing },
+        });
+      }
+
+      setCanvaDetails(cD);
+    }
   }
 
   const [downloadProgressPercentage, setDownloadProgressPercentage] =
@@ -3718,7 +3727,10 @@ const CanvaEditor = ({
                 <div className="aplus-content-assets-title">Transitions</div>
                 <div className="video-editor-transition-grid">
                   <div className="video-editor-transition-holder">
-                    <div className="video-editor-transition-box">
+                    <div
+                      className="video-editor-transition-box"
+                      onClick={() => handleSetTransition("none", "1")}
+                    >
                       <div className="video-transition-element"></div>
                     </div>
                     <div className="video-editor-transition-name">None</div>
