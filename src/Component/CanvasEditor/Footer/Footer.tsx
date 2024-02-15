@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import "./Footer.css";
+import { Dropdown } from "antd";
 
 const Footer = ({
   canvaData,
@@ -7,12 +8,16 @@ const Footer = ({
   selectedCanva,
   addCanva,
   canvaRef,
+  openTransition,
+  handleCanvaDelete,
 }: {
   canvaData?: any;
   handleSelectedCanva?: any;
   addCanva?: any;
   canvaRef?: any;
   selectedCanva?: any;
+  openTransition?: any;
+  handleCanvaDelete?: any;
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -61,7 +66,7 @@ const Footer = ({
             // console.log(canva)
 
             if (canva?.transition) {
-              if (canva?.transition?.type == "disolve" && j == i) {
+              if (canva?.transition?.type == "disolve" && j == i + 1) {
                 const upperCanvas = document.querySelector(
                   ".aplus-content-canva-wrapper"
                 );
@@ -74,25 +79,69 @@ const Footer = ({
                 setTimeout(() => {
                   upperCanvas?.removeChild(div);
                 }, 2000);
-              } else if (canva?.transition?.type == "linear" && j == i) {
+              } else if (canva?.transition?.type == "linear" && j == i + 1) {
                 const upperCanvas = document.querySelector(
                   ".aplus-content-canva-wrapper"
                 ) as HTMLElement;
 
-                const div = document.createElement("div");
-                div.classList.add("linear");
-                div.style.backgroundImage = `url(${canva.img})`;
-                upperCanvas.appendChild(div);
+                const linearAnimationContainer = document.createElement("div");
+                linearAnimationContainer.classList.add(
+                  "linear-footer-container"
+                );
 
-                let dec = 100;
+                const prevImg = document.createElement(
+                  "img"
+                ) as HTMLImageElement;
+                prevImg.src = canvaData[j - 1]?.img;
+                prevImg.height = canvaRef?.current?.height;
+                prevImg.width = canvaRef?.current?.width;
 
-                let interval = setInterval(() => {
-                  dec -= 0.5;
-                  div.style.mask = `linear-gradient(90deg, rgb(0, 0, 0) ${dec}%, rgba(0, 0, 0, 0) ${dec}%)`;
-                  if (dec == 0) {
+                prevImg.classList.add("linear-footer-prev-img");
+
+                const CurrentImg = document.createElement(
+                  "img"
+                ) as HTMLImageElement;
+                CurrentImg.src = canva?.img;
+                CurrentImg.height = canvaRef?.current?.height;
+                CurrentImg.width = canvaRef?.current?.width;
+
+                CurrentImg.classList.add("linear-footer-current-img");
+
+                CurrentImg.style.right = `-${canvaRef?.current?.width}px`;
+
+                linearAnimationContainer.appendChild(prevImg);
+                linearAnimationContainer.appendChild(CurrentImg);
+
+                upperCanvas.appendChild(linearAnimationContainer);
+
+                let currentWidth = 0;
+
+                const interval = setInterval(() => {
+                  if (currentWidth >= canvaRef?.current?.width) {
                     clearInterval(interval);
                   }
+
+                  currentWidth += 4.5;
+                  prevImg.style.left = `-${currentWidth}px`;
+                  CurrentImg.style.right = `-${
+                    canvaRef?.current?.width - currentWidth
+                  }px`;
                 });
+
+                // const div = document.createElement("div");
+                // div.classList.add("linear");
+                // div.style.backgroundImage = `url(${canva.img})`;
+                // upperCanvas.appendChild(div);
+
+                // let dec = 100;
+
+                // let interval = setInterval(() => {
+                //   dec -= 0.5;
+                //   div.style.mask = `linear-gradient(90deg, rgb(0, 0, 0) ${dec}%, rgba(0, 0, 0, 0) ${dec}%)`;
+                //   if (dec == 0) {
+                //     clearInterval(interval);
+                //   }
+                // });
               }
             }
           });
@@ -231,6 +280,19 @@ const Footer = ({
       },
       false
     );
+
+    return () => {
+      document.removeEventListener("mousedown", () =>
+        console.log("removed mousedown")
+      );
+      document.removeEventListener("mouseup", () =>
+        console.log("removed mouseup")
+      );
+      Cursor.removeEventListener("mouseup", () =>
+        console.log("removed mouseup")
+      );
+      document.removeEventListener("click", () => console.log("removed click"));
+    };
   }, []);
 
   return (
@@ -293,47 +355,109 @@ const Footer = ({
 
         <div className="video-editor__canva-holder">
           {canvaData?.map((canva: any, i: number) => (
-            <div
-              className={
-                selectedCanva == i
-                  ? "video-editor__canva-image-holder video-editor__canva-image-holder-active "
-                  : "video-editor__canva-image-holder"
-              }
-              onClick={() => handleSelectedCanva(i)}
-            >
-              <img
-                src={canva.img}
-                alt="image canva"
-                className="video-editor__canva-img"
-              />
-
-              {/* {canvaData.length !== i + 1 && (
-                <div className="add-transition">
-                  <svg
-                    width="25"
-                    height="25"
-                    viewBox="0 0 25 25"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.3841 5.53068V19.5307"
-                      stroke="black"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M5.38409 12.5307H19.3841"
-                      stroke="black"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
+            <div className="footer-canva-box">
+              <div
+                className={
+                  selectedCanva == i
+                    ? "video-editor__canva-image-holder video-editor__canva-image-holder-active "
+                    : "video-editor__canva-image-holder"
+                }
+                onClick={() => handleSelectedCanva(i)}
+              >
+                <img
+                  src={canva.img}
+                  alt="image canva"
+                  className="video-editor__canva-img"
+                />
+              </div>
+              {canvaData.length !== i + 1 && (
+                <div
+                  className="add-transition"
+                  onClick={() => openTransition(i + 1)}
+                >
+                  {!canvaData[i + 1]?.transition?.type ? (
+                    <svg
+                      width="25"
+                      height="25"
+                      viewBox="0 0 25 25"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12.3841 5.53068V19.5307"
+                        stroke="black"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M5.38409 12.5307H19.3841"
+                        stroke="black"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13 17L18 12L13 7"
+                        stroke="black"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M6 17L11 12L6 7"
+                        stroke="black"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  )}
                 </div>
-              )} */}
-              {/* <div className="video-editor__canva-trimmer-holder"></div> */}
+              )}
+
+              <div className="video-editor__canva-delete">
+                <Dropdown
+                  trigger={["click"]}
+                  menu={{
+                    items: [
+                      {
+                        label: (
+                          <div onClick={() => handleCanvaDelete(i)}>Delete</div>
+                        ),
+                        key: "1",
+                      },
+                    ],
+                  }}
+                >
+                  <a
+                    onClick={(e) => e.preventDefault()}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <svg
+                      width="25"
+                      height="9"
+                      viewBox="0 0 25 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M16.0156 4.5C16.0156 6.44336 14.4434 8.01562 12.5 8.01562C10.5566 8.01562 8.98438 6.44336 8.98438 4.5C8.98438 2.55664 10.5566 0.984375 12.5 0.984375C14.4434 0.984375 16.0156 2.55664 16.0156 4.5ZM21.0938 0.984375C19.1504 0.984375 17.5781 2.55664 17.5781 4.5C17.5781 6.44336 19.1504 8.01562 21.0938 8.01562C23.0371 8.01562 24.6094 6.44336 24.6094 4.5C24.6094 2.55664 23.0371 0.984375 21.0938 0.984375ZM3.90625 0.984375C1.96289 0.984375 0.390625 2.55664 0.390625 4.5C0.390625 6.44336 1.96289 8.01562 3.90625 8.01562C5.84961 8.01562 7.42188 6.44336 7.42188 4.5C7.42188 2.55664 5.84961 0.984375 3.90625 0.984375Z"
+                        fill="#8B3DFF"
+                      />
+                    </svg>
+                  </a>
+                </Dropdown>
+              </div>
             </div>
           ))}
         </div>

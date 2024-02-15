@@ -19,6 +19,8 @@ import {
   Dropdown,
   MenuProps,
   AutoComplete,
+  Spin,
+  Progress,
 } from "antd";
 import { fabric } from "fabric";
 import { AlignGuidelines } from "fabric-guideline-plugin";
@@ -110,6 +112,37 @@ const CanvaEditor = ({
 
   const [canvaDetails, setCanvaDetails] = useState<any>([]);
   const [currentSelectedCanva, setCurrentSelectedCanva] = useState<any>();
+
+  const [SelectedTransitionFrame, setSelectedAnimationFrame] =
+    useState<any>(null);
+
+  function handleOpenTransition(frame: number) {
+    console.log(frame);
+    setSelectedAnimationFrame(frame);
+    setCurrentMenu("transition");
+  }
+
+  function handleSetTransition(type: string, timing: string) {
+    const cD = [...canvaDetails];
+    if (cD[SelectedTransitionFrame]?.transition) {
+      cD[SelectedTransitionFrame].transition.type = type;
+      cD[SelectedTransitionFrame].transition.timing = timing;
+    } else {
+      Object.assign(cD[SelectedTransitionFrame], {
+        transition: { type: type, time: timing },
+      });
+    }
+
+    setCanvaDetails(cD);
+  }
+
+  const [downloadProgressPercentage, setDownloadProgressPercentage] =
+    useState<number>(0);
+
+  function handleDownloadProgressPercentage(percentage: number) {
+    console.log("PERCENTAGE INCREASED", downloadProgressPercentage);
+    setDownloadProgressPercentage(percentage);
+  }
 
   function handleSelectedCanva(num: number) {
     setCurrentSelectedCanva(num);
@@ -612,6 +645,53 @@ const CanvaEditor = ({
       backgroundColor: "#ffffff",
     });
 
+    // function getVideoElement(url: any) {
+    //   var videoE = document.createElement("video");
+    //   videoE.muted = true;
+    //   videoE.crossOrigin = "anonymous";
+    //   var source = document.createElement("source");
+    //   source.src = url;
+    //   source.type = "video/mp4";
+    //   videoE.appendChild(source);
+
+    //   videoE.height = 720;
+    //   videoE.width = 1080;
+
+    //   return videoE;
+    // }
+
+    // var url_mp4 =
+    //   "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+
+    // var videoE = getVideoElement(url_mp4);
+    // var fab_video: any = new fabric.Image(videoE, { left: 0, top: 0 });
+    // fab_video.set("video_src", url_mp4);
+    // canvas.add(fab_video);
+
+    // (fab_video.getElement() as HTMLVideoElement).play();
+    // fabric.util.requestAnimFrame(function render() {
+    //   canvas.renderAll();
+    //   fabric.util.requestAnimFrame(render);
+    // });
+
+    // fabric.Object.prototype.toObject = (function (toObject) {
+    //   return function (propertyToInclude) {
+    //     propertyToInclude = (propertyToInclude || []).concat(["video_src"]);
+
+    //     return toObject?.apply(this, [propertyToInclude]);
+    //   };
+    // })(fabric.Object.prototype.toObject);
+
+    // fabric.Object.prototype.toObject = (function (toObject) {
+    //   return function (propertiesToInclude) {
+    //     propertiesToInclude = (propertiesToInclude || []).concat(["video_src"]);
+    //     console.log(propertiesToInclude, this);
+    //     return toObject.apply(this, [propertiesToInclude]);
+    //   };
+    // })(fabric.Object.prototype.toObject);
+
+    // console.log(canvas.toJSON());
+
     setCurrentSelectedCanva(0);
 
     const guideline = new AlignGuidelines({
@@ -779,9 +859,6 @@ const CanvaEditor = ({
         ".aplus-content-canva-wrapper"
       ) as HTMLElement;
 
-      const holder = document.querySelector(
-        ".aplus-content-canva-holder"
-      ) as HTMLElement;
       const canvaElement = document.querySelector(
         "#aplus-content"
       ) as HTMLElement;
@@ -789,24 +866,30 @@ const CanvaEditor = ({
         ".upper-canvas "
       ) as HTMLElement;
 
-      holder.addEventListener("click", (e: any) => {
-        e.stopImmediatePropagation();
-        const list = e.target.classList;
-
-        list?.forEach((v: any) => {
-          if (v !== "upper-canvas") {
-            canvas.discardActiveObject().renderAll();
-            const upperCanva = document.querySelector(
-              ".upper-canvas "
-            ) as HTMLElement;
-            upperCanva.style.borderColor = "transparent";
-          }
-        });
-      });
-
       // holder.style.scale = '0.7';
       // wrapper.style.scale = '0.7';
     }
+    const holder = document.querySelector(
+      ".aplus-content-canva-holder"
+    ) as HTMLElement;
+    document.addEventListener("click", (e: any) => {
+      e.stopImmediatePropagation();
+      const list = e.target.classList;
+
+      list?.forEach((v: any) => {
+        console.log("cammmerrere");
+        if (v !== "upper-canvas") {
+          console.log("helo worllll");
+          canvas.discardActiveObject();
+          canvas.renderAll();
+
+          const upperCanva = document.querySelector(
+            ".upper-canvas "
+          ) as HTMLElement;
+          upperCanva.style.borderColor = "transparent";
+        }
+      });
+    });
 
     canvas.on("drop", (event: any) => {
       // console.log('EVENT ', canvas?.getPointer(event.e));
@@ -1022,9 +1105,11 @@ const CanvaEditor = ({
 
   useEffect(() => {
     if (rendered) {
-      let cD = [...canvaDetails];
-      Object.assign(cD[0], { transition: { type: "disolve", time: 1 } });
-      Object.assign(cD[1], { transition: { type: "linear", time: 1 } });
+      // let cD = [...canvaDetails];
+      // cD[0].transition = null;
+      // Object.assign(cD[1], { transition: { type: "disolve", time: 1 } });
+      // Object.assign(cD[2], { transition: { type: "linear", time: 1 } });
+      // Object.assign(cD[3], { transition: { type: "slide-down", time: 1 } });
 
       localStorage.setItem("video-editor", JSON.stringify(canvaDetails));
       setRendered(false);
@@ -2255,6 +2340,17 @@ const CanvaEditor = ({
     }
   }
 
+  /**
+   * this function helps us delete the selected canva in the timeline
+   * @param i
+   */
+  function handleCanvaDelete(i: number) {
+    const cD = [...canvaDetails];
+    const newcD = cD.filter((data, j) => j !== i);
+    localStorage.setItem("video-editor", JSON.stringify(newcD));
+    setCanvaDetails(newcD);
+  }
+
   useEffect(() => {
     if (currentMenu == "layers") {
       const list = document.querySelector(
@@ -2341,7 +2437,14 @@ const CanvaEditor = ({
   function handleSave() {
     // handleDownload();
     setOutputImage("open");
-    HandleDownload(canvaDetails, canvasRef);
+    setTimeout(() => {
+      HandleDownload(
+        canvaDetails,
+        canvasRef,
+        downloadProgressPercentage,
+        handleDownloadProgressPercentage
+      );
+    }, 100);
   }
 
   function handleDownload() {
@@ -3565,7 +3668,8 @@ const CanvaEditor = ({
               background:
                 currentMenu == "bg" ||
                 currentMenu == "dimensions" ||
-                currentMenu == "edit"
+                currentMenu == "edit" ||
+                currentMenu == "transition"
                   ? "#FFFFFF"
                   : "#222222",
             }}
@@ -3650,6 +3754,40 @@ const CanvaEditor = ({
                   >
                     Paragraph
                   </p>
+                </div>
+              </div>
+            )}
+            {currentMenu == "transition" && (
+              <div className="video-editor-transition-sidebar">
+                <div className="aplus-content-assets-title">Transitions</div>
+                <div className="video-editor-transition-grid">
+                  <div className="video-editor-transition-holder">
+                    <div className="video-editor-transition-box">
+                      <div className="video-transition-element"></div>
+                    </div>
+                    <div className="video-editor-transition-name">None</div>
+                  </div>
+                  <div className="video-editor-transition-holder">
+                    <div
+                      className="video-editor-transition-box"
+                      onClick={() => handleSetTransition("disolve", "1")}
+                    >
+                      <div className="video-transition-element video-transition-disolve"></div>
+                    </div>
+                    <div className="video-editor-transition-name">Disolve</div>
+                  </div>
+                  <div className="video-editor-transition-holder">
+                    <div
+                      className="video-editor-transition-box"
+                      onClick={() => handleSetTransition("linear", "1")}
+                    >
+                      <div className="video-transition-slide">
+                        <div className="video-transition-element vts"></div>
+                        <div className="video-transition-element vts-behind"></div>
+                      </div>
+                    </div>
+                    <div className="video-editor-transition-name">Slide</div>
+                  </div>
                 </div>
               </div>
             )}
@@ -6644,6 +6782,8 @@ const CanvaEditor = ({
             handleSelectedCanva={handleSelectedCanva}
             addCanva={handleAddCanva}
             canvaRef={canvasRef}
+            openTransition={handleOpenTransition}
+            handleCanvaDelete={handleCanvaDelete}
           />
         </div>
       </div>
@@ -6656,6 +6796,11 @@ const CanvaEditor = ({
         width={1080}
       >
         <div className="aplus-content-output-container">
+          {!(downloadProgressPercentage >= 100) && (
+            <div className="aplus-content-progress">
+              <Progress percent={downloadProgressPercentage} />
+            </div>
+          )}
           {/* <Input
             type="text"
             className="aplus-content-output-input"
