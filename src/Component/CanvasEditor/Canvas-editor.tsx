@@ -117,7 +117,6 @@ const CanvaEditor = ({
     useState<any>(null);
 
   function handleOpenTransition(frame: number) {
-    console.log(frame);
     setSelectedAnimationFrame(frame);
     setCurrentMenu("transition");
   }
@@ -140,7 +139,6 @@ const CanvaEditor = ({
     useState<number>(0);
 
   function handleDownloadProgressPercentage(percentage: number) {
-    console.log("PERCENTAGE INCREASED", downloadProgressPercentage);
     setDownloadProgressPercentage(percentage);
   }
 
@@ -158,7 +156,6 @@ const CanvaEditor = ({
     };
 
     const cD = [...canvaDetails];
-    console.log("okoko ", canvaDetails);
 
     cD.push({
       prop: emptyCanva,
@@ -738,9 +735,6 @@ const CanvaEditor = ({
           canvasHistory.undoStatus === true ||
           canvasHistory.redoStatus === true
         ) {
-          console.log(
-            "Do not do anything, this got triggered automatically while the undo and redo actions were performed"
-          );
         } else {
           const jsonData = canvas.toJSON();
           const canvasAsJson = JSON.stringify(jsonData);
@@ -753,12 +747,11 @@ const CanvaEditor = ({
             const indexToBeInserted = canvasHistory.currentStateIndex + 1;
             canvasHistory.state[indexToBeInserted] = canvasAsJson;
             const elementsToKeep = indexToBeInserted + 1;
-            console.log(`History rewritten, preserved ${elementsToKeep} items`);
+
             canvasHistory.state = canvasHistory.state.splice(0, elementsToKeep);
 
             // NOTE: This happens when there is a new item pushed to the canvasHistory (normal case) 20180912:Alevale
           } else {
-            console.log("push to canvasHistory");
             canvasHistory.state.push(canvasAsJson);
           }
 
@@ -767,7 +760,6 @@ const CanvaEditor = ({
       };
 
       canvas.on("object:added", () => {
-        console.log("commmmmmmm");
         updateHistory();
         setObjectEvent(true);
         // handleCanvaDetailsUpd();
@@ -789,9 +781,6 @@ const CanvaEditor = ({
 
       var undo = () => {
         if (canvasHistory.currentStateIndex - 1 === -1) {
-          console.log(
-            "do not do anything anymore, you are going far to the past, before creation, there was nothing"
-          );
           return;
         }
 
@@ -815,9 +804,6 @@ const CanvaEditor = ({
           canvasHistory.currentStateIndex + 1 ===
           canvasHistory.state.length
         ) {
-          console.log(
-            "do not do anything anymore, you do not know what is after the present, do not mess with the future"
-          );
           return;
         }
 
@@ -877,9 +863,7 @@ const CanvaEditor = ({
       const list = e.target.classList;
 
       list?.forEach((v: any) => {
-        console.log("cammmerrere");
         if (v !== "upper-canvas") {
-          console.log("helo worllll");
           canvas.discardActiveObject();
           canvas.renderAll();
 
@@ -1078,7 +1062,6 @@ const CanvaEditor = ({
       const data: any = JSON.parse(localStorage.getItem("video-editor") || "");
 
       setTimeout(() => {
-        console.log("imcoming ", data[0]);
         const json = data[0].prop;
         canvas.loadFromJSON(json, () => {
           canvas?.renderAll();
@@ -1126,7 +1109,7 @@ const CanvaEditor = ({
   function handleCanvaDetailsUpd() {
     // console.log("comeiomeiorjio");
     const cD = [...canvaDetails];
-    console.log(currentSelectedCanva);
+
     // console.log("CAMVVVV ", canvaDetails, currentSelectedCanva);
 
     const currentCD = { ...cD[currentSelectedCanva] };
@@ -1144,6 +1127,7 @@ const CanvaEditor = ({
       canvasRef?.current?.renderAll();
       canvasRef?.current?.requestRenderAll();
     });
+    console.log("omomomomomomomo");
   }, [currentSelectedCanva]);
 
   useEffect(() => {
@@ -1218,12 +1202,6 @@ const CanvaEditor = ({
    */
   function handleNavEvents(e: any) {
     setCurrentMenu(e);
-    console.log(canvasRef?.current?.getActiveObject().get("type"));
-    if (e == "dimensions") {
-      console.log("WEEEE");
-    } else if (e == "bg") {
-      console.log("BG");
-    }
   }
 
   /**
@@ -1275,10 +1253,10 @@ const CanvaEditor = ({
     onError?: any;
   }) => {
     // Manually handle the file here
-    console.log(file);
+
     getBase64(file, (base64: any) => {
       onMediaUpdate({ img: base64, name: file.name });
-      // console.log('Base64:', base64);
+
       setMediaList([...mediaList, { img: base64, name: file?.name }]);
 
       onSuccess();
@@ -1301,7 +1279,7 @@ const CanvaEditor = ({
    */
   function handleMediaUploadSubmit() {
     setSelectedMedia(null);
-    // console.log(mediaList);
+
     setMediaList([...mediaList, { img: selectedMedia }]);
   }
 
@@ -2036,7 +2014,6 @@ const CanvaEditor = ({
         charSpacing: e,
       });
     } else if (type == "border-width") {
-      console.log("camemmme ");
       if (currentObject?.stroke) {
         currentObject?.set({
           strokeWidth: e,
@@ -2048,7 +2025,6 @@ const CanvaEditor = ({
         });
       }
     } else if (type == "border-radius") {
-      console.log("wewewe ");
       currentObject?.set({
         rx: e,
         ry: e,
@@ -2068,7 +2044,6 @@ const CanvaEditor = ({
       currentObject.filters = [];
       currentObject.applyFilters();
     } else if (type == "grayscale") {
-      console.log("camememen");
       currentObject.filters = [];
       currentObject.applyFilters();
       currentObject.filters.push(new fabric.Image.filters.Grayscale());
@@ -2130,7 +2105,6 @@ const CanvaEditor = ({
 
       currentObject.applyFilters();
     } else if (type == "polaroid") {
-      console.log("comeojoejrj");
       currentObject.filters = [];
       currentObject.applyFilters();
       currentObject.filters.push(new fabric.Image.filters.Grayscale());
@@ -2147,8 +2121,6 @@ const CanvaEditor = ({
         });
       }
     } else if (type == "img-brightness") {
-      console.log(e, e * 0.1);
-
       let brightness = new fabric.Image.filters.Brightness({
         brightness: e * 0.1,
       });
@@ -2165,7 +2137,6 @@ const CanvaEditor = ({
 
       currentObject.applyFilters();
     } else if (type == "stroke-svg") {
-      console.log("CC", currentObject?.getObjects());
       currentObject?.getObjects().map((obj: any) => {
         obj.set({
           fill: e,
@@ -2386,8 +2357,6 @@ const CanvaEditor = ({
       var sortable = new Sortable(list, {
         sort: true,
         onEnd: (evt: any) => {
-          console.log(evt);
-
           // console.log(evt);
           var origin = evt.oldIndex;
           var destination = evt.newIndex;
@@ -2396,19 +2365,14 @@ const CanvaEditor = ({
           let originalArr = canvasRef.current?.getObjects();
 
           let stepsmoved = destination - origin;
-          console.log(stepsmoved, "STPS MOVED", destination, origin);
 
           if (origin > destination) {
-            console.log("CCAAA");
             // canvasRef.current?.moveTo(canvaArr[origin], destination + 1);
             for (let i = 0; i < Math.abs(stepsmoved); i++) {
-              console.log("CCAAA");
               canvasRef?.current.bringForward(canvaArr[origin]);
             }
           } else {
-            console.log("DDDDDDDDDD");
             for (let i = 0; i < Math.abs(stepsmoved); i++) {
-              console.log("CCAAA");
               canvasRef?.current.sendBackwards(canvaArr[origin]);
             }
           }
@@ -2468,7 +2432,7 @@ const CanvaEditor = ({
 
     function exportStream() {
       // combine all our chunks in one blob
-      console.log(frames);
+
       const blob = new Blob(frames, { type: "video/mp4" });
 
       // do something with this blob
@@ -2485,7 +2449,6 @@ const CanvaEditor = ({
     }
 
     function saveChunks(e: any) {
-      console.log("MEDA ON AV ", e);
       frames.push(e.data);
     }
 
@@ -2622,7 +2585,6 @@ const CanvaEditor = ({
                 canvasRef.current?.renderAll();
                 canvasRef.current?.requestRenderAll();
                 document.body.removeChild(div);
-                console.log(img.getSrc(), img);
               });
             }
           }
@@ -2656,9 +2618,8 @@ const CanvaEditor = ({
    * deletes the selected object
    */
   function handleToolbarDelete() {
-    console.log("cccc");
     const activeObj = canvasRef?.current?.getActiveObject();
-    console.log(activeObj);
+
     canvasRef.current.remove(activeObj);
     canvasRef.current?.renderAll();
     canvasRef.current?.requestRenderAll();
@@ -2671,8 +2632,6 @@ const CanvaEditor = ({
     // var object = fabric.util.object.clone(canvasRef?.current?.getActiveObject());
 
     canvasRef?.current?.getActiveObject().clone((e: any) => {
-      console.log(e);
-
       e.set({
         top: e.top + 5,
         left: e.left + 5,
@@ -3463,9 +3422,6 @@ const CanvaEditor = ({
 
   function handleDropdownClick(e: any) {
     e.preventDefault();
-    setTimeout(() => {
-      console.log(canvasRef?.current?.getActiveObject()?.textAlign);
-    }, 200);
   }
 
   return (

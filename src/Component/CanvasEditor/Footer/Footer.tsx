@@ -38,7 +38,7 @@ const Footer = ({
     if (isPlaying) {
       interval = setInterval(() => {
         setIncrement(increment + 1);
-        timelineCursor.style.transform = "translateX(" + increment + "px)";
+        timelineCursor.style.left = +increment + 74 + "px";
       }, 10);
 
       let totalWidth = 0;
@@ -59,8 +59,6 @@ const Footer = ({
       array_width.forEach((width: number, i: number) => {
         if (width == increment) {
           handleSelectedCanva(i + 1);
-
-          console.log("canvaData ", canvaData);
 
           canvaData?.forEach((canva: any, j: number) => {
             // console.log(canva)
@@ -118,6 +116,7 @@ const Footer = ({
 
                 const interval = setInterval(() => {
                   if (currentWidth >= canvaRef?.current?.width) {
+                    upperCanvas.removeChild(linearAnimationContainer);
                     clearInterval(interval);
                   }
 
@@ -197,7 +196,8 @@ const Footer = ({
           setIsPlaying(false);
           setIncrement(1);
           handleSelectedCanva(0);
-          timelineCursor.style.transform = "translateX(" + 1 + "px)";
+          // timelineCursor.style.transform = "translateX(" + 1 + "px)";
+          timelineCursor.style.left = "74px";
         }
       });
     }
@@ -216,7 +216,9 @@ const Footer = ({
     const Cursor = document.querySelector(
       ".video-editor__timeline-cursor"
     ) as HTMLElement;
-
+    const timelineCanvas = document.querySelectorAll(
+      ".video-editor__canva-image-holder"
+    );
     let isDraggin = false;
     let prevX: any;
 
@@ -239,11 +241,8 @@ const Footer = ({
             var deltaX = newX - prevX;
 
             let offLeft = e.clientX - 521 + 74;
-            console.log(
-              "DELTA X ",
-              offLeft - 74,
-              totalWidth + (timelineCanvas.length - 1) * 10
-            );
+
+            setIncrement(offLeft - 74);
 
             if (
               deltaX > 0 &&
